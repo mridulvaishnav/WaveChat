@@ -17,8 +17,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
     const allowedOrigins = [
         "http://localhost:8081", // expo mobile
         "http://localhost:5173", // vite frontend
-        process.env.FRONTEND_URL as string // production frontend
-    ];
+        process.env.FRONTEND_URL // production frontend
+    ].filter(Boolean) as string[]; // filter out undefined values
 
     const io = new SocketServer(httpServer, {
         cors: {
@@ -40,7 +40,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             if (!user) {
                 return next(new Error("Authentication error: User not found"));
             }
-            (socket as SocketWithUserId).userId = user._id.toString(); // store userId in socket for later use
+            socket.data.userId = user._id.toString(); // store userId in socket for later use
             next();
         } catch (error: any) {
             next(new Error(error));
@@ -49,8 +49,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     // this "connection" event name is special and should be written like this
     // it's the event that is triggered when a client connects to the server
-    io.on("connection", (socket: SocketWithUserId) => {
-        const userId = (socket as SocketWithUserId).userId;
+    io.on("connection", (socket) => {
+        const userId = socket.data.userId;
 
         // send list of currently online users to the client that just connected
         socket.emit("online-users", { userIds: Array.from(onlineUsers.keys()) });
@@ -93,7 +93,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
                 chat.lastMessageAt = new Date();
                 await chat.save();
 
-                await message.populate("sender", "name email avatar");
+                await message.populate("sender", "name avatar");
 
                 // emit the new message to all participants in the chat
                 io.to(`chat:${chatId}`).emit("new-message", { message });
