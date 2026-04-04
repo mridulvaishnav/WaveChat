@@ -1,5 +1,5 @@
-import {connectDB} from './src/config/database';
 import app from "./src/app";
+import { connectDB } from "./src/config/database";
 import { createServer } from "http";
 import { initializeSocket } from "./src/utils/socket";
 
@@ -9,12 +9,13 @@ const httpServer = createServer(app);
 
 initializeSocket(httpServer);
 
-
-connectDB().then(() => {
+connectDB()
+  .then(() => {
     httpServer.listen(PORT, () => {
-        console.log("Server is running on port PORT:", PORT);
+      console.log("Server is running on PORT:", PORT);
     });
-}).catch((error) => {
-    console.error("Failed to connect to the database:", error);
+  })
+  .catch((error) => {
+    console.error("Failed to start server:", error);
     process.exit(1);
-});
+  });
