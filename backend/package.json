@@ -4,8 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --watch run index.ts",
-    "start": "bun run index.ts",
+    "dev": "bun --watch index.ts",
+    "start": "bun index.ts",
     "build": "bun install"
   },
   "devDependencies": {
@@ -19,8 +19,7 @@
     "@types/express": "^5.0.6",
     "cors": "2.8.5",
     "express": "5.2.1",
-    "mongodb": "^7.1.1",
-    "mongoose": "^9.3.3",
+    "mongoose": "9.0.2",
     "socket.io": "4.8.2"
   }
 }
